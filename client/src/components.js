@@ -12,9 +12,9 @@ export default class ComponentsBuilder {
     return {
       border: 'line',
       mouse: true,
-      key: true,
+      keys: true,
       top: 0,
-      scrollboar: {
+      scrollbar: {
         ch: ' ',
         inverse: true,
       },
@@ -46,7 +46,7 @@ export default class ComponentsBuilder {
   setInputComponent(onEnterPressed) {
     const input = blessed.textarea({
       parent: this.#screen,
-      botton: 0,
+      bottom: 0,
       height: '10%',
       inputOnFocus: true,
       padding: {
@@ -72,7 +72,7 @@ export default class ComponentsBuilder {
       align: 'left',
       width: '50%',
       height: '90%',
-      itens: ['{bold}Messenger{/}'],
+      items: ['{bold}Messenger{/}'],
     });
 
     return this;
