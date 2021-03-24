@@ -1,4 +1,5 @@
 import ComponentsBuilder from './components.js';
+import { constants } from './constants.js';
 
 export default class TerminalController {
   #usersColors = new Map();
@@ -32,14 +33,51 @@ export default class TerminalController {
   #onMessageReceived({ screen, chat }) {
     return (msg) => {
       const { username, message } = msg;
-      const collor = this.#getUserColor(username);
-      chat.addItem(`{${collor}}{bold}${username}{/}: ${message}`);
+      const color = this.#getUserColor(username);
+      chat.addItem(`{${color}}{bold}${username}{/}: ${message}`);
+
+      screen.render();
+    };
+  }
+
+  #onStatusChanged({ screen, status }) {
+    return (users) => {
+      const { content } = status.items.shift();
+      status.clearItems();
+      status.addItem(content);
+
+      users.forEach((username) => {
+        const color = this.#getUserColor(username);
+        status.addItem(`{${color}}{bold}${username}{/}`);
+      });
+
+      screen.render();
+    };
+  }
+
+  #onLogChanged({ screen, activityLog }) {
+    return (msg) => {
+      const [username] = msg.split(/\s/);
+      const color = this.#getUserColor(username);
+      activityLog.addItem(`{${color}}{bold}${msg.toString()}{/}`);
+
       screen.render();
     };
   }
 
   #registerEvents(eventEmitter, components) {
-    eventEmitter.on('message:received', this.#onMessageReceived(components));
+    eventEmitter.on(
+      constants.events.app.MESSAGE_RECEIVED,
+      this.#onMessageReceived(components),
+    );
+    eventEmitter.on(
+      constants.events.app.STATUS_UPDATED,
+      this.#onStatusChanged(components),
+    );
+    eventEmitter.on(
+      constants.events.app.ACTIVITYLOG_UPDATED,
+      this.#onLogChanged(components),
+    );
   }
 
   async initializeTable(eventEmitter) {
@@ -50,6 +88,8 @@ export default class TerminalController {
       .setLayoutComponent()
       .setInputComponent(this.#onInputReceived(eventEmitter))
       .setChatComponent()
+      .setStatusComponent()
+      .setActivityLogComponent()
       .build();
 
     this.#registerEvents(eventEmitter, components);
@@ -57,11 +97,24 @@ export default class TerminalController {
     components.input.focus();
     components.screen.render();
 
+    eventEmitter.emit(constants.events.app.ACTIVITYLOG_UPDATED, 'nico joined');
+    eventEmitter.emit(
+      constants.events.app.ACTIVITYLOG_UPDATED,
+      'mariazinha joined',
+    );
     setInterval(() => {
-      eventEmitter.emit('message:received', {
+      const users = ['nico', 'jorge', 'mariazinha'];
+      eventEmitter.emit(constants.events.app.STATUS_UPDATED, users);
+      users.push('hacker12');
+
+      eventEmitter.emit(constants.events.app.MESSAGE_RECEIVED, {
         username: 'nico',
-        message: 'hello world',
+        message: 'hey',
       });
-    }, 1000);
+      eventEmitter.emit(constants.events.app.MESSAGE_RECEIVED, {
+        username: 'mariazinha',
+        message: 'hey',
+      });
+    }, 2000);
   }
 }
