@@ -31,6 +31,7 @@ export default class Controller {
       id,
       username,
     }));
+
     this.socketServer.sendMessage(
       user.socket,
       constants.event.UPDATE_USERS,
@@ -53,6 +54,7 @@ export default class Controller {
     includeCurrentSocket = false,
   }) {
     const usersOnRoom = this.#rooms.get(roomId);
+
     for (const [key, user] of usersOnRoom) {
       if (!includeCurrentSocket && key === socketId) {
         continue;
