@@ -27,9 +27,10 @@ export default class Controller {
       console.log('onSocketClosed', data.toString());
     };
   }
+
   #updateGlobalUserData(socketId, userData) {
     const users = this.#users;
-    const user = users.get(sockerId) ?? {};
+    const user = users.get(socketId) ?? {};
 
     const updatedUserData = {
       ...user,
