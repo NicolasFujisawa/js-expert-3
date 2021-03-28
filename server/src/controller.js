@@ -64,6 +64,18 @@ export default class Controller {
     }
   }
 
+  message(id, data) {
+    const { username, roomId } = this.#users.get(id);
+
+    this.broadCast({
+      socketId: id,
+      roomId,
+      message: { username, message: data },
+      event: constants.event.MESSAGE,
+      includeCurrentSocket: true,
+    });
+  }
+
   #joinUserOnRoom(roomId, user) {
     const usersOnRoom = this.#rooms.get(roomId) ?? new Map();
 
