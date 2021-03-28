@@ -25,7 +25,7 @@ export default class TerminalController {
   #onInputReceived(eventEmitter) {
     return function () {
       const message = this.getValue();
-      console.log(message);
+      eventEmitter.emit(constants.events.app.MESSAGE_SENT, message);
       this.clearValue();
     };
   }
@@ -96,25 +96,5 @@ export default class TerminalController {
 
     components.input.focus();
     components.screen.render();
-
-    eventEmitter.emit(constants.events.app.ACTIVITYLOG_UPDATED, 'nico joined');
-    eventEmitter.emit(
-      constants.events.app.ACTIVITYLOG_UPDATED,
-      'mariazinha joined',
-    );
-    setInterval(() => {
-      const users = ['nico', 'jorge', 'mariazinha'];
-      eventEmitter.emit(constants.events.app.STATUS_UPDATED, users);
-      users.push('hacker12');
-
-      eventEmitter.emit(constants.events.app.MESSAGE_RECEIVED, {
-        username: 'nico',
-        message: 'hey',
-      });
-      eventEmitter.emit(constants.events.app.MESSAGE_RECEIVED, {
-        username: 'mariazinha',
-        message: 'hey',
-      });
-    }, 2000);
   }
 }
