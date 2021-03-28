@@ -23,8 +23,8 @@ export default class Controller {
   }
 
   #onSocketClosed(id) {
-    return (data) => {
-      console.log('onSocketClosed', data.toString());
+    return () => {
+      console.log('onSocketClosed with', id);
     };
   }
 
