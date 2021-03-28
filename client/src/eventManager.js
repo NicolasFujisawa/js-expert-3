@@ -31,6 +31,18 @@ export default class EventManager {
     this.#updateActivityLogComponent(`${user.username} joined!`);
   }
 
+  disconnectUser(user) {
+    const { username, id } = user;
+
+    this.#allUsers.delete(id);
+    this.#updateUsersComponent();
+    this.#updateActivityLogComponent(`${username} left!`);
+  }
+
+  message(message) {
+    this.#emitComponentUpdate(constants.events.app.MESSAGE_RECEIVED, message);
+  }
+
   #emitComponentUpdate(event, message) {
     this.componentEmitter.emit(event, message);
   }
