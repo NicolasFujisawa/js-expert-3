@@ -43,6 +43,7 @@ export default class Controller {
 
     usersOnRoom.set(user.id, user);
     this.#rooms.set(roomId, usersOnRoom);
+    return usersOnRoom;
   }
 
   #onSocketData(id) {

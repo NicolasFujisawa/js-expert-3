@@ -5,11 +5,11 @@ node index.js \
         --host localhost
 */
 
-import TerminalController from './terminalController.js';
+import TerminalController from './src/terminalController.js';
 import Events from 'events';
-import CliConfig from './cliConfig.js';
-import SocketClient from './socket.js';
-import EventManager from './eventManager.js';
+import CliConfig from './src/cliConfig.js';
+import SocketClient from './src/socket.js';
+import EventManager from './src/eventManager.js';
 
 const [nodePath, filePath, ...commands] = process.argv;
 const config = CliConfig.parseArguments(commands);
@@ -20,6 +20,8 @@ const socketClient = new SocketClient(config);
 await socketClient.initialize();
 
 const eventManager = new EventManager({ componentEmitter, socketClient });
+const events = eventManager.getEvents();
+socketClient.attachEvents(events);
 const data = {
   roomId: config.room,
   username: config.username,

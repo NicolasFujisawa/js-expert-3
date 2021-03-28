@@ -1,6 +1,8 @@
 import { constants } from './constants.js';
 
 export default class EventManager {
+  #allUsers = new Map();
+
   constructor({ componentEmitter, socketClient }) {
     this.componentEmitter = componentEmitter;
     this.socketClient = socketClient;
@@ -12,5 +14,28 @@ export default class EventManager {
     this.componentEmitter.on(constants.events.app.MESSAGE_SENT, (message) => {
       this.socketClient.sendMessage(constants.events.socket.MESSAGE, message);
     });
+  }
+
+  updateUsers(users) {
+    const connectedUsers = this.#allUsers;
+
+    connectedUsers.forEach(({ id, username }) =>
+      this.#allUsers.set(id, username),
+    );
+
+    this.#updateUsersCompoment();
+  }
+
+  #updateUsersCompoment() {
+    this.componentEmitter.emit(constants.events.app.STATUS_UPDATED),
+      Array.from(this.#allUsers.values());
+  }
+
+  getEvents() {
+    const functions = Reflect.ownKeys(EventManager.prototype)
+      .filter((fn) => fn !== 'constructor')
+      .map((name) => [name, this[name].bind(this)]);
+
+    return new Map(functions);
   }
 }
