@@ -1,18 +1,23 @@
 {
-  "name": "src",
+  "name": "server",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node index.js --username user01 --room sala01 --hostUri http://localhost:9898",
+    "start": "node src/",
+    "dev": "npx nodemon src/",
+    "format": "npx prettier -w .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "blessed": "^0.1.81",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7",
     "prettier": "^2.2.1"
   }
 }
