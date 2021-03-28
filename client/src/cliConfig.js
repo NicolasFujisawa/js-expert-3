@@ -10,7 +10,7 @@ export default class CliConfig {
     this.protocol = protocol.replace(/\W/, '');
   }
 
-  static paseArguments(commands) {
+  static parseArguments(commands) {
     const cmd = new Map();
 
     for (const key in commands) {

@@ -1,4 +1,4 @@
-import { constants } from './constants';
+import { constants } from './constants.js';
 
 export default class Controller {
   #users = new Map();
@@ -20,12 +20,11 @@ export default class Controller {
   }
 
   async joinRoom(socketId, data) {
-    const userData = JSON.parse(data);
-    console.log(`${userData} joined!`[socketId]);
+    const userData = data;
+    console.log(`${userData.username} joined! ${[socketId]}`);
+    const user = this.#updateGlobalUserData(socketId, userData);
 
     const { roomId } = userData;
-
-    const user = this.#updateGlobalUserData(socketId, data);
     const users = this.#joinUserOnRoom(roomId, user);
 
     const currentUsers = Array.from(users.values()).map(({ id, username }) => ({
