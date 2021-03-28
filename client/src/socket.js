@@ -35,7 +35,7 @@ export default class SocketClient {
     });
 
     this.#serverConnection.on('error', (error) => {
-      console.log('DEU RUIM', error);
+      console.error('DEU RUIM', error);
     });
 
     for (const [key, value] of events) {

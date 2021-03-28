@@ -17,18 +17,18 @@ export default class EventManager {
   }
 
   updateUsers(users) {
-    const connectedUsers = this.#allUsers;
-
+    const connectedUsers = users;
     connectedUsers.forEach(({ id, username }) =>
       this.#allUsers.set(id, username),
     );
-
-    this.#updateUsersCompoment();
+    this.#updateUsersComponent();
   }
 
-  #updateUsersCompoment() {
-    this.componentEmitter.emit(constants.events.app.STATUS_UPDATED),
-      Array.from(this.#allUsers.values());
+  #updateUsersComponent() {
+    this.componentEmitter.emit(
+      constants.events.app.STATUS_UPDATED,
+      Array.from(this.#allUsers.values()),
+    );
   }
 
   getEvents() {
