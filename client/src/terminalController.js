@@ -1,5 +1,9 @@
 import ComponentsBuilder from './components.js';
 import { constants } from './constants.js';
+import NodeRSA from 'node-rsa';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 export default class TerminalController {
   #usersColors = new Map();
@@ -25,7 +29,13 @@ export default class TerminalController {
   #onInputReceived(eventEmitter) {
     return function () {
       const message = this.getValue();
-      eventEmitter.emit(constants.events.app.MESSAGE_SENT, message);
+
+      const publicKey = new NodeRSA(
+        process.env.PUBLIC_KEY.replace(/\\n/g, '\n'),
+      );
+      const encryptedData = publicKey.encrypt(message, 'base64');
+
+      eventEmitter.emit(constants.events.app.MESSAGE_SENT, encryptedData);
       this.clearValue();
     };
   }
@@ -33,11 +43,20 @@ export default class TerminalController {
   #onMessageReceived({ screen, chat }) {
     return (msg) => {
       const { username, message } = msg;
+      const decryptedMessage = this.#decryptMessage(message);
       const color = this.#getUserColor(username);
-      chat.addItem(`{${color}}{bold}${username}{/}: ${message}`);
+      chat.addItem(`{${color}}{bold}${username}{/}: ${decryptedMessage}`);
 
       screen.render();
     };
+  }
+
+  #decryptMessage(message) {
+    const privateKey = new NodeRSA(
+      process.env.PRIVATE_KEY.replace(/\\n/g, '\n'),
+    );
+    console.log(message);
+    return privateKey.decrypt(message, 'utf-8');
   }
 
   #onStatusChanged({ screen, status }) {
